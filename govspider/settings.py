@@ -50,7 +50,7 @@ SPIDER_MIDDLEWARES = {
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    # 'govspider.middlewares.GovspiderDownloaderMiddleware': 543,
+    'govspider.middlewares.GovspiderDownloaderMiddleware': None,
     'govspider.middlewares.SeleniumMiddleware': 543,
 }
 
@@ -58,12 +58,14 @@ DOWNLOADER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 EXTENSIONS = {
     'scrapy.extensions.telnet.TelnetConsole': None,
+    'scrapy.extensions.corestats.CoreStats': None,  # 禁用默认的数据收集器
+    'govspider.count_scrapy_time.MyCoreStats': 500,  # 启用自定义的信号收集器
 }
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'govspider.pipelines.GovspiderPipeline': 300,
+    'govspider.pipelines.GovspiderPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
