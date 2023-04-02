@@ -29,7 +29,8 @@ class GovSpider(scrapy.Spider):
     def start_requests(self):
         for i in range(1, 2):
             start_url = 'https://www.zhoushan.gov.cn/col/col1276171/index.html?pageNum={}'.format(i)
-            yield scrapy.Request(start_url, callback=self.parse, meta={'is_selenium': 1})
+            yield scrapy.Request(start_url, callback=self.parse, errback=self.errback,
+                                 meta={'is_selenium': 1})
 
     def parse(self, response):
         article_lists = response.xpath('//table[@class="lm_tabe"]//tr')
