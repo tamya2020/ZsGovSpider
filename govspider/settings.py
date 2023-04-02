@@ -59,8 +59,10 @@ DOWNLOADER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 EXTENSIONS = {
     'scrapy.extensions.telnet.TelnetConsole': None,
+    'scrapy.extensions.logstats.LogStats': None,
     'scrapy.extensions.corestats.CoreStats': None,  # 禁用默认的数据收集器
     'govspider.count_scrapy_time.MyCoreStats': 500,  # 启用自定义的信号收集器
+    'govspider.custom_logstats.LogStats': 501,  # 统计抓取的pages、items、pages/min、items/min 这四个int参数
 }
 
 # Configure item pipelines
@@ -104,3 +106,6 @@ USER_AGENT_LIST = [
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24",
     "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"
 ]
+LOG_LEVEL = 'INFO'
+# LOG_FILE = 'log.txt'  # 则表示将日志信息写入到指定文件中进行存储。
+LOGSTATS_INTERVAL = 2

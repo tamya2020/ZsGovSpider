@@ -114,7 +114,7 @@ class SeleniumMiddleware(object):
         if request.meta.get("is_selenium") == 1:
             try:
                 spider.browser.get(request.url)
-                time.sleep(1)
+                time.sleep(2)
                 body = spider.browser.page_source
                 return HtmlResponse(spider.browser.current_url,
                                     body=body,

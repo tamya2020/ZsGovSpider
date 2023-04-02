@@ -19,16 +19,17 @@ class GovSpider(scrapy.Spider):
     def __init__(self, *arg, **args):
         options = webdriver.ChromeOptions()
         # 无头浏览器
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         # 不使用沙箱
         options.add_argument('--no-sandbox')
+        options.add_argument('--start-maximized')
         self.browser = webdriver.Chrome(options=options, executable_path='chromedriver.exe')
         self.extractor = GeneralNewsExtractor()
         super(GovSpider, self).__init__()
 
     def start_requests(self):
-        for i in range(1, 2):
-            start_url = 'https://www.zhoushan.gov.cn/col/col1276171/index.html?pageNum={}'.format(i)
+        for i in range(1, 3):
+            start_url = 'https://www.zhoushan.gov.cn/col/col1276171/index.html?pageNum={}&uid=7284066'.format(i)
             yield scrapy.Request(start_url, callback=self.parse, errback=self.errback,
                                  meta={'is_selenium': 1})
 
