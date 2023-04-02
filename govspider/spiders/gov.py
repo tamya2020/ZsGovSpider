@@ -2,6 +2,7 @@ from copy import deepcopy
 
 import scrapy
 from scrapy import Selector
+from scrapy.spidermiddlewares.httperror import HttpError
 from selenium import webdriver
 from gne import GeneralNewsExtractor
 
@@ -52,3 +53,9 @@ class GovSpider(scrapy.Spider):
     # 爬虫关闭时，会自动调用closed函数
     def closed(self, reason):
         self.browser.quit()
+
+    def errback(self, failure):
+        self.logger.error(repr(failure))
+        if failure.check(HttpError):
+            response = failure.value.response
+            self.logger.error('HttpError on %s', response.url)
