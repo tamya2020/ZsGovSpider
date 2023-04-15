@@ -43,13 +43,16 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+# Spider中间件主要对请求后的响应结果进行处理；
 SPIDER_MIDDLEWARES = {
     'govspider.middlewares.GovspiderSpiderMiddleware': 543,
 }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
+# 下载中间件修改User-Agent、处理重定向、设置代理、失败重试、设置Cookies等。
 DOWNLOADER_MIDDLEWARES = {
+    "scrapy.downloadermiddleware.redirect.RedirectMiddleware": None,
     'govspider.middlewares.GovspiderDownloaderMiddleware': None,
     'govspider.middlewares.SeleniumMiddleware': 543,
     'govspider.middlewares.UaMiddleware': 542,
@@ -61,7 +64,7 @@ EXTENSIONS = {
     'scrapy.extensions.telnet.TelnetConsole': None,
     'scrapy.extensions.logstats.LogStats': None,
     'scrapy.extensions.corestats.CoreStats': None,  # 禁用默认的数据收集器
-    'govspider.count_scrapy_time.MyCoreStats': 500,  # 启用自定义的信号收集器
+    'govspider.custom_core_stats.MyCoreStats': 500,  # 启用自定义的信号收集器
     'govspider.custom_logstats.LogStats': 501,  # 统计抓取的pages、items、pages/min、items/min 这四个int参数
 }
 
@@ -108,4 +111,5 @@ USER_AGENT_LIST = [
 ]
 LOG_LEVEL = 'INFO'
 # LOG_FILE = 'log.txt'  # 则表示将日志信息写入到指定文件中进行存储。
-LOGSTATS_INTERVAL = 2
+LOGSTATS_INTERVAL = 3
+FILES_STORE = './data'

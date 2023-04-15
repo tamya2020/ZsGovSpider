@@ -12,6 +12,13 @@ from govspider.items import GovspiderItem
 class GovSpider(scrapy.Spider):
     name = 'gov'
     allowed_domains = ['www.zhoushan.gov.cn']
+    # 处理200-300范围之外的response，可以通过 handle_httpstatus_list 属性或HTTPERROR_ALLOWED_CODES 来指定能处理的response返回值。
+    handle_httpstatus_list = [301]
+
+    # 不同spider启用不同的配置
+    # custom_settings = {
+    #     'SOME_SETTING': 'some value',
+    # }
 
     # start_urls = []
 
@@ -19,7 +26,7 @@ class GovSpider(scrapy.Spider):
     def __init__(self, *arg, **args):
         options = webdriver.ChromeOptions()
         # 无头浏览器
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         # 不使用沙箱
         options.add_argument('--no-sandbox')
         options.add_argument('--start-maximized')
@@ -34,6 +41,9 @@ class GovSpider(scrapy.Spider):
                                  meta={'is_selenium': 1})
 
     def parse(self, response):
+        if response.status == 301:
+            pass
+
         article_lists = response.xpath('//table[@class="lm_tabe"]//tr')
         article_lists_len = len(article_lists)
         if article_lists_len == 0:

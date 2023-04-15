@@ -6,7 +6,6 @@
 from copy import deepcopy
 
 import scrapy
-from scrapy import Selector
 from selenium import webdriver
 from gne import GeneralNewsExtractor
 
@@ -17,6 +16,7 @@ class GovSpider(scrapy.Spider):
     name = 'incgov'
     allowed_domains = ['www.zhoushan.gov.cn']
     custom_settings = {}
+
     # 构造函数，初始化chrome webdirver
     def __init__(self, *arg, **args):
         options = webdriver.ChromeOptions()

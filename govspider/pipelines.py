@@ -10,4 +10,24 @@ from itemadapter import ItemAdapter
 
 class GovspiderPipeline:
     def process_item(self, item, spider):
+        print(item)
+        return item
+
+
+from redis import Redis
+
+
+class IncrementproPipeline(object):
+    conn = None
+
+    def open_spider(self, spider):
+        self.conn = Redis(host='127.0.0.1', port=6379)
+
+    def process_item(self, item, spider):
+        dic = {
+            'name': item['name'],
+            'kind': item['kind']
+        }
+        print(dic)
+        self.conn.lpush('movieData', dic)
         return item
