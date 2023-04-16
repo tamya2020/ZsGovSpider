@@ -6,6 +6,8 @@
 from copy import deepcopy
 
 import scrapy
+from redis import StrictRedis
+from scrapy_redis_bloomfilter.bloomfilter import BloomFilter
 from selenium import webdriver
 from gne import GeneralNewsExtractor
 
@@ -19,6 +21,7 @@ class GovSpider(scrapy.Spider):
         'ITEM_PIPELINES': {
             'govspider.pipelines.IncrementproPipeline': 300
         },
+        # deltafetch是一个spider中间件，根据架构图，spider只有yield item到pipeline的时候才会触发，即yield item才能让deltafetch生效。
         'SPIDER_MIDDLEWARES': {
             'scrapy_deltafetch.DeltaFetch': 100
         },
@@ -34,6 +37,9 @@ class GovSpider(scrapy.Spider):
         options.add_argument('--no-sandbox')
         self.browser = webdriver.Chrome(options=options, executable_path='chromedriver.exe')
         self.extractor = GeneralNewsExtractor()
+        # 初始化bloomFilter
+        conn = StrictRedis(host='localhost', port=6379)
+        self.bf = BloomFilter(conn, 'govbf', 5, 6)
         super(GovSpider, self).__init__()
 
     def start_requests(self):
@@ -47,11 +53,16 @@ class GovSpider(scrapy.Spider):
             self.crawler.engine.close_spider(self, "列表页失效")
         item = GovspiderItem()
         for article_item in article_lists:
-            item['title'] = article_item.xpath("./td[1]/a/text()").extract_first().strip()
-            item['date'] = article_item.xpath("./td[2]/text()").extract_first().strip()
             detail_url = response.urljoin(article_item.xpath("./td[1]/a/@href").extract_first())
-            request = scrapy.Request(detail_url, callback=self.parse_detail, meta={'item': deepcopy(item)})
-            yield request
+            if self.bf.exists(detail_url):
+                print('该条数据已经爬取过了，不需要再次爬取了!!!')
+                self.bf.insert(detail_url)
+            else:
+                print('该条数据没有爬取过，可以爬取......')
+                item['title'] = article_item.xpath("./td[1]/a/text()").extract_first().strip()
+                item['date'] = article_item.xpath("./td[2]/text()").extract_first().strip()
+                request = scrapy.Request(detail_url, callback=self.parse_detail, meta={'item': deepcopy(item)})
+                yield request
 
     def parse_detail(self, response: scrapy.http.Response):
         item = response.meta['item']
