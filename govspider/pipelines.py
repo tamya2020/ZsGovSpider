@@ -6,15 +6,13 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
+from redis import Redis
 
 
 class GovspiderPipeline:
     def process_item(self, item, spider):
         print(item)
         return item
-
-
-from redis import Redis
 
 
 class IncrementproPipeline(object):
@@ -25,9 +23,8 @@ class IncrementproPipeline(object):
 
     def process_item(self, item, spider):
         dic = {
-            'name': item['name'],
-            'kind': item['kind']
+            'title': item['title'],
+            'date': item['date']
         }
         print(dic)
-        self.conn.lpush('movieData', dic)
         return item

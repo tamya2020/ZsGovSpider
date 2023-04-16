@@ -15,7 +15,15 @@ from govspider.items import GovspiderItem
 class GovSpider(scrapy.Spider):
     name = 'incgov'
     allowed_domains = ['www.zhoushan.gov.cn']
-    custom_settings = {}
+    custom_settings = {
+        'ITEM_PIPELINES': {
+            'govspider.pipelines.IncrementproPipeline': 300
+        },
+        'SPIDER_MIDDLEWARES': {
+            'scrapy_deltafetch.DeltaFetch': 100
+        },
+        'DELTAFETCH_ENABLED': True
+    }
 
     # 构造函数，初始化chrome webdirver
     def __init__(self, *arg, **args):
